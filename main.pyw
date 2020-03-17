@@ -63,13 +63,25 @@ def GUI():
 
     def Go():
         """开始"""
+
         e_str = e_e.get()
         s_str = int(e_s.get())
         m_str = int(e_m.get())
+        
+        if s_str == m_str:
+            text.insert("insert", "Error:This is a wrong range")
+            return
+        
+        if s_str > m_str:
+            s_str, m_str = m_str, s_str
+            e_s.delete('0', 'end')
+            e_m.delete('0', 'end')
+            e_s.insert("insert", s_str)
+            e_m.insert("insert", m_str)
 
         process_str, result_str = main(e_str, s_str, m_str)
 
-        if not result_str:
+        if result_str == None:
             text.insert("insert",
                         "{}Error:Range too large\n"
                         .format(process_str) + \
@@ -78,9 +90,16 @@ def GUI():
         else:
             text.insert("insert", "{}x ≈ {:.5f}\n"
                         .format(process_str, result_str))
+                  
 
+    def Clear_Entry():
+        """删除Entry框内容"""
+        e_e.delete('0', 'end')
+        e_s.delete('0', 'end')
+        e_m.delete('0', 'end')
 
-    def Clear():
+        
+    def Clear_Text():
         """删除文本框内容"""
 
         text.delete('1.0', 'end')
@@ -125,12 +144,22 @@ def GUI():
                    font=('Arial', 9)) # 输入最大值的Entry控件
     e_m.place(x=260, y=150)
 
-    mymenu = tk.Menu()
-    mymenu.add_command(label = "Go", command = Go)
-    mymenu.add_command(label = "Clear", command = Clear)
-    mymenu.add_command(label = "Exit", command = Exit)
-    window.config(menu = mymenu)
+    window_menu = tk.Menu()
+    window_menu.add_command(label = "Go", command = Go)
+    window_menu.add_command(label = "Entry", command = Clear_Entry)
+    window_menu.add_command(label = "Text", command = Clear_Text)
+    window_menu.add_command(label = "Exit", command = Exit)
+         
+    # 显示菜单
+    window.config(menu = window_menu)
 
+    # 绑定快捷键
+    window.bind_all("<Control-g>", lambda event: Go())
+    window.bind_all("<Control-e>", lambda event: Clear_Entry())
+    window.bind_all("<Control-t>", lambda event: Clear_Text())
+    window.bind_all("<Control-q>", lambda event: Exit())
+         
+    # 创建文本框
     text = tk.Text(window,
                    width = 69,
                    height = 10,
