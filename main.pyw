@@ -1,6 +1,6 @@
 """
 原方程：x^4 - 15 = 0
-求解方程的其中一个近似解，已知该解的范围(range_small, range_large)
+求解方程的其中一个近似解，已知该解的范围(self.range_middle, self.range_large)
 求解精度为0.01（指方程左右两边）
 要求最后输出结果保留五位小数
 """
@@ -8,62 +8,73 @@
 import tkinter as tk
 import pickle
 
-def main(equation_str,
-         range_small = 1,
-         range_large = 10,
-         result_range = 0.001):
-    """主函数"""
+class solver:
 
-    global process
-    process = ""
-    
-    def equation(x):
+    def __init__(self,
+        equation_str,
+        range_small = 0,
+        range_large = 2,
+        result_range = 0.001):
+        """初始化"""
+
+        self.equation_str = equation_str
+        self.range_small = range_small
+        self.range_large = range_large
+        self.result_range = result_range
+        self.process = ""
+
+    def equation(self, x):
         """将方程转换成函数，并返回y值"""
          
-        y = eval(equation_str[0:-4])
+        y = eval(self.equation_str[0:-4])
         return y
 
-
-    def judge():
+    def judge(self, range_small, range_large):
         """替换 x 的范围"""
         
         range_middle = (range_small + range_large) / 2
-        D_value = abs(equation(range_middle))
-        global process
-        process += ("range_middle = {:>20}, \t\tD_value = {}\n"
+        D_value = abs(self.equation(range_middle))
+        self.process += ("range_middle = {:>20}, \t\tD_value = {}\n"
                     .format(range_middle, D_value))
         
-        if (equation(range_small)
-            * equation(range_middle)) < 0:
+        if (self.equation(range_small)
+            * self.equation(range_middle)) < 0:
             return range_small, range_middle, range_middle, D_value
-        else :
+        else:
             return range_middle, range_large, range_middle, D_value
 
+    def solve(self):
+        """解方程"""
 
-    for i in range(20):
-        """调用函数，循环更替 x 的范围"""
+        for i in range(20):
+            """调用函数，循环更替 x 的范围"""
 
-        (range_small, range_large, range_middle, D_value) = judge()
-        
-        if abs(D_value) <= result_range:
-            # 方程两边误差小于规定的范围，退出循环
+            (self.range_small,
+            self.range_large, 
+            self.range_middle, 
+            self.D_value) = self.judge(self.range_small, self.range_large)
             
-            result = range_middle
-            break
-    else:
-        result = None
+            if abs(self.D_value) <= self.result_range:
+                # 方程两边误差小于规定的范围，退出循环
+                
+                self.result = self.range_middle
+                break
+        else:
+            self.result = None
 
-    # 返回计算结果
-    return process, result
+        # 返回计算结果
+        return self.process, self.result
 
-
+# test = solver("x ** 2 - 2 = 0", 0, 3)
+# process, result = test.solve()
+# print("process = {}result = {}".format(process, result))
 def GUI():
     """创建GUI界面"""
 
 
     def Go():
         """开始"""
-
+        
         e_str = e_e.get()
         s_str = int(e_s.get())
         m_str = int(e_m.get())
@@ -79,8 +90,9 @@ def GUI():
             e_s.insert("insert", s_str)
             e_m.insert("insert", m_str)
 
-        process_str, result_str = main(e_str, s_str, m_str)
-
+        equation = solver(e_str, s_str, m_str)
+        process_str, result_str = equation.solve()
+        
         if result_str == None:
             text.insert("insert",
                         "{}Error:Range too large\n"
@@ -90,7 +102,8 @@ def GUI():
         else:
             text.insert("insert", "{}x ≈ {:.5f}\n"
                         .format(process_str, result_str))
-                  
+
+
 
     def Clear_Entry():
         """删除Entry框内容"""
@@ -108,7 +121,7 @@ def GUI():
     def Exit():
         """退出"""
 
-        exit()
+        window.quit()
         
     window = tk.Tk() # 创建根窗口
     window.title('Welcome to our website')
@@ -149,16 +162,17 @@ def GUI():
     window_menu.add_command(label = "Entry", command = Clear_Entry)
     window_menu.add_command(label = "Text", command = Clear_Text)
     window_menu.add_command(label = "Exit", command = Exit)
-         
+    
+    
     # 显示菜单
     window.config(menu = window_menu)
-
+    
     # 绑定快捷键
     window.bind_all("<Control-g>", lambda event: Go())
     window.bind_all("<Control-e>", lambda event: Clear_Entry())
     window.bind_all("<Control-t>", lambda event: Clear_Text())
     window.bind_all("<Control-q>", lambda event: Exit())
-         
+    
     # 创建文本框
     text = tk.Text(window,
                    width = 69,
@@ -172,4 +186,3 @@ def GUI():
 if __name__ == '__main__':
     # 测试
     GUI()
-
