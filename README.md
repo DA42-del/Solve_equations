@@ -5,7 +5,8 @@ This is a easy test for solving equations,We are trying to make it better and be
 
 The First Version was released in 2020.
 
-```History
+```
+History
 Until now, we have already updated 3 times.
 1. Command line program
 2. GUI program
@@ -16,9 +17,11 @@ For more information, please go to XXXX://XXXX/XXXX(In fact, This page hasn't be
 
 ### Instructions
 
-```Oh my goddess, you wanna a instruction? For this easiest python file? Unexpectedly!
-Believe that you can find out how to use it.
-Best Wishes.
+```
+!. Oh my goddess, you wanna a instruction? 
+@. For this easiest python file? Unexpectedly!
+#. Believe that you can find out how to use it.
+$. Best Wishes.
 ```
 
 Here we go!
